@@ -14,7 +14,7 @@ Modeled on the Raisd campus public docs pattern
 |------|---------|
 | [`index.html`](index.html) | Hub — one-line truth + TOC |
 | [`architecture.html`](architecture.html) | Maya → Anamaya MCP → OMS |
-| [`capabilities.html`](capabilities.html) | Must-know · may-share · never invent · tools |
+| [`capabilities.html`](capabilities.html) | **Main loop** (flight/hotel/both) · must-know · may-share · tools |
 | [`path.html`](path.html) | One chat turn + corporate ESPPD spine |
 
 ## One-line truth
