@@ -76,6 +76,7 @@
 
     <div class="toc">
       <a href="#main"><strong>Main loop</strong><span>Intent → summary → search → book → confirm</span></a>
+      <a href="#mvp"><strong>MVP rules</strong><span>3 options · geo · intent flex · photos</span></a>
       <a href="#know"><strong>Must know</strong><span>Internal capability Maya needs to reason</span></a>
       <a href="#share"><strong>May share</strong><span>Safe to say to travelers</span></a>
       <a href="#never"><strong>Never invent</strong><span>Only OMS / tools may assert</span></a>
@@ -100,7 +101,7 @@ flowchart TD
   D --> A
   C -->|yes| E[3. OMS search via MCP<br/>present ≤3 best options]
   E --> F{User clicks Book?}
-  F -->|no| E2[Re-search from chat prefs]
+  F -->|no| E2[Re-search / next 3 from chat]
   E2 --> E
   F -->|yes| G[4. Verify all intents met]
   G --> H[5. Confirmation page<br/>per flow design]
@@ -135,17 +136,17 @@ flowchart TD
             <tr>
               <td>4</td>
               <td>Intent drift</td>
-              <td>If chat suggests a different intent (e.g. was flight-only, now asks hotel), <strong>re-confirm intent</strong> before continuing.</td>
+              <td>If chat suggests a different intent (e.g. hotel settled, then “cari pesawat ke Jogja”), <strong>re-confirm</strong> and follow the new intent — do not insist on the old one.</td>
             </tr>
             <tr>
               <td>5</td>
               <td>After Search</td>
-              <td>Show ≤3 options that best match preferences (live OMS via MCP).</td>
+              <td>Show <strong>≤3 options</strong> for flights <em>and</em> hotels (same UX). Live OMS via MCP.</td>
             </tr>
             <tr>
               <td>6</td>
               <td>Options without Book</td>
-              <td>If user does not click Book, treat chat as refine preferences — search again; do not invent options.</td>
+              <td>User can ask for another set. Re-search from chat prefs; do not invent options.</td>
             </tr>
             <tr>
               <td>7</td>
@@ -157,7 +158,46 @@ flowchart TD
       </div>
       <div class="note warn">
         Training and NRCP may change wording. They must not invent a third product job
-        (visa encyclopaedia, open Q&amp;A, etc.) that pulls Maya off this loop.
+        that pulls Maya off this loop.
+      </div>
+    </section>
+
+    <section class="section" id="mvp">
+      <h2>MVP rules (team, 23 Sep)</h2>
+      <p class="lead">Locked while proving the happy path to booking. Edge cases come after the spine works.</p>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr><th>Rule</th><th>Detail</th><th>Source</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>≤3 options</td>
+              <td>Hotel same as flight: first batch of 3; user may ask for more if not a fit.</td>
+              <td>Asto</td>
+            </tr>
+            <tr>
+              <td>Hotel photos</td>
+              <td>Show OMS property photos in options. Map through MCP before Maya presents them.</td>
+              <td>Asto / Iman</td>
+            </tr>
+            <tr>
+              <td>Geo exact</td>
+              <td>“Kuta Bali” must not silently return “Kuta Lombok”. Prefer named place; disambiguate if ambiguous.</td>
+              <td>Asto bug</td>
+            </tr>
+            <tr>
+              <td>Intent flexible</td>
+              <td>After hotel pick, “cari pesawat ke Jogja” is a valid intent change — re-confirm and search flights. Do not dig in on hotel-only.</td>
+              <td>Asto bug → SPEC</td>
+            </tr>
+            <tr>
+              <td>Positive path first</td>
+              <td>Use normal scenarios until booking works. Separate “AI IQ” from “flow broken” (Yogi: optional Gemini only to validate flow, market stays on our model).</td>
+              <td>Yogi / Iman</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Maya Architecture Docs</title>
-  <meta name="description" content="Public architecture and capability mapping for Maya Travel AI — Maya → Anamaya MCP → OMS." />
+  <title>Maya — rule of thumb</title>
+  <meta name="description" content="Straight-forward Maya capability: book flight, hotel, or both." />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -18,7 +18,7 @@
         <div class="nav-dd">
           <a class="nav-dd-main active" href="index.html">Overview</a>
           <div class="nav-dd-menu" role="menu">
-            <a class="active" href="index.html">Docs hub</a>
+            <a class="active" href="index.html">Rule of thumb</a>
             <a href="architecture.html">Architecture</a>
             <a href="capabilities.html">Capabilities</a>
             <a href="path.html">Request path</a>
@@ -37,9 +37,9 @@
           <a class="nav-dd-main" href="capabilities.html">Capabilities</a>
           <div class="nav-dd-menu" role="menu">
             <a href="capabilities.html#main">Main loop</a>
-            <a href="capabilities.html#know">What Maya must know</a>
-            <a href="capabilities.html#share">What Maya may share</a>
-            <a href="capabilities.html#tools">AUTO vs CONFIRM tools</a>
+            <a href="capabilities.html#mvp">MVP rules</a>
+            <a href="capabilities.html#know">Must know</a>
+            <a href="capabilities.html#tools">AUTO vs CONFIRM</a>
           </div>
         </div>
         <div class="nav-dd">
@@ -56,142 +56,105 @@
 
   <main>
     <section class="hero">
-      <h1>Maya architecture &amp; capability map</h1>
+      <h1>Maya — rule of thumb</h1>
       <p>
-        Maya’s job is only two outcomes: <strong>book a flight, a hotel, or both</strong>.
-        Everything else is supporting that loop — intent → summary → search → ≤3 options → book → confirmation.
-        Technical path: <strong>Traveler → maya-api → Anamaya MCP → OMS</strong>.
+        Straight-forward, so context does not wander.
+        Maya only does <strong>one job</strong>: help the traveler
+        <strong>book a flight, a hotel, or both</strong>.
       </p>
       <div class="meta-row">
-        <span class="chip ok">Flight · hotel · or both</span>
-        <span class="chip ok">Intent → summary → search → book</span>
+        <span class="chip ok">Flight · hotel · both</span>
+        <span class="chip ok">≤3 options each time</span>
         <span class="chip ok">Maya → MCP → OMS</span>
-        <span class="chip warn">MCP ≠ inventory DB</span>
-        <span class="chip">Review draft for SDD</span>
+        <span class="chip warn">Positive path to book first</span>
       </div>
     </section>
 
     <div class="note">
-      <strong>Product lock (Asto, 23 Sep 2026) — please review.</strong>
-      Main capability is the booking loop below. If this is right, we freeze it as SDD.
-      Language can vary; the loop cannot drift.
-      Detail: <a href="capabilities.html#main">Capability — main loop</a>.
+      <strong>Team review (23 Sep).</strong>
+      Asto: keep it straight-forward.
+      Yogi: prove end-to-end flow before arguing about model IQ.
+      Detail loop: <a href="capabilities.html#main">main capability</a>.
     </div>
 
-    <div class="toc">
-      <a href="capabilities.html#main">
-        <strong>Main capability (review first)</strong>
-        <span>Intent → summary → 3 options → book → confirm</span>
-      </a>
-      <a href="architecture.html">
-        <strong>Architecture — Maya → MCP → OMS</strong>
-        <span>Gateway path, memory vs inventory, two MCP services</span>
-      </a>
-      <a href="capabilities.html">
-        <strong>Capability catalogue</strong>
-        <span>Must-know · may-share · never invent · AUTO/CONFIRM</span>
-      </a>
-      <a href="path.html">
-        <strong>Request path &amp; one turn</strong>
-        <span>MCP sequence + corporate ESPPD spine</span>
-      </a>
-    </div>
+    <section class="section" id="rules">
+      <h2>10 rules (memorize these)</h2>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr><th>#</th><th>Rule</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td><strong>Job</strong> = book flight, hotel, or both. Nothing else is the product.</td></tr>
+            <tr><td>2</td><td><strong>Intent first</strong> → fill slots → show <strong>summary</strong> → wait for Search.</td></tr>
+            <tr><td>3</td><td>No Search click = user is editing the summary. Update slots. Do not search yet.</td></tr>
+            <tr><td>4</td><td>Suspect intent change (e.g. hotel path then “cari pesawat ke Jogja”) = <strong>re-confirm intent</strong>, then follow the new intent. Do not dig in on the old one.</td></tr>
+            <tr><td>5</td><td>After Search: show <strong>≤3 options</strong> for flights <em>and</em> for hotels. User can ask for another batch if not happy.</td></tr>
+            <tr><td>6</td><td>No Book click = refine from chat → search again. Never invent options.</td></tr>
+            <tr><td>7</td><td>After Book: check all intents met → confirmation page (flow design).</td></tr>
+            <tr><td>8</td><td><strong>Geo is exact</strong>: “Kuta Bali” ≠ “Kuta Lombok”. Prefer the place the user named.</td></tr>
+            <tr><td>9</td><td><strong>Inventory is live OMS</strong> via MCP. MCP stores behaviour/session — not fares or rooms.</td></tr>
+            <tr><td>10</td><td><strong>MVP focus</strong>: positive path until booking works. Weird edge cases later. Do not confuse “AI dumb” with “flow broken”.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
     <section class="section">
-      <h2>Main capability (one picture)</h2>
+      <h2>The loop (one picture)</h2>
       <div class="card">
         <div class="card-body">
           <pre class="mermaid">
 flowchart TD
-  A[1. Detect intent<br/>flight / hotel / both] --> B[2. Fill slots → trip summary]
-  B --> C{User clicks Search?}
-  C -->|no — edits chat| B
-  C -->|suspect intent change| D[Re-confirm intent]
-  D --> B
-  C -->|yes| E[3. Search OMS via MCP<br/>show ≤3 best options]
-  E --> F{User clicks Book?}
-  F -->|no — refine chat| E
-  F -->|yes| G[4. Check all intents met]
-  G --> H[5. Confirmation page<br/>per flow design]
+  A[1. Intent<br/>flight / hotel / both] --> B[2. Summary]
+  B --> C{Search?}
+  C -->|no — edit chat| B
+  C -->|intent changed| D[Re-confirm]
+  D --> A
+  C -->|yes| E[3. ≤3 options<br/>OMS via MCP]
+  E --> F{Book?}
+  F -->|no — more options| E
+  F -->|yes| G[4. Intents met?]
+  G --> H[5. Confirmation]
           </pre>
         </div>
       </div>
     </section>
 
     <section class="section">
-      <h2>One-line technical truth</h2>
+      <h2>Technical path (short)</h2>
       <p class="lead">
-        MCP is the <em>gateway + session/behaviour surface</em> for agents.
-        Flight and hotel inventory is always queried live from OMS — it is
-        <strong>not</strong> cached as inventory inside MCP.
+        <code>Traveler → maya-api → Anamaya MCP → OMS</code>
       </p>
       <div class="legend">
         <div class="legend-item">
-          <strong>Session / behaviour</strong>
-          <span>Intent, slots, trip summary, in-chat picks, reply pack (NRCP).</span>
+          <strong>In session</strong>
+          <span>Intent, summary, picks, prefs.</span>
         </div>
         <div class="legend-item">
-          <strong>Live OMS via MCP</strong>
-          <span>Flights, hotels, rates, photos, policy, bookings, approvals.</span>
+          <strong>Live from OMS</strong>
+          <span>Flights, hotels, photos, prices, bookings.</span>
         </div>
         <div class="legend-item">
-          <strong>Hard gates</strong>
-          <span>Book / pay / cancel need explicit traveler CONFIRM — pack text cannot weaken them.</span>
+          <strong>NRCP</strong>
+          <span>How Maya speaks / reads informal ID — not a hotel database.</span>
         </div>
         <div class="legend-item">
-          <strong>Honest empty</strong>
-          <span>Empty OMS discovery → say so; never invent fares, hotels, or tickets.</span>
+          <strong>CONFIRM</strong>
+          <span>Book / pay / cancel need explicit Ya.</span>
         </div>
       </div>
-    </section>
-
-    <section class="section">
-      <h2>Source of truth</h2>
-      <div class="table-wrap">
-        <table class="attr">
-          <thead>
-            <tr>
-              <th>Layer</th>
-              <th>Repo / surface</th>
-              <th>Public?</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>This docs site</td>
-              <td><code>anamaya-maya/maya-architecture-docs</code></td>
-              <td class="yes">Yes — GitHub Pages</td>
-            </tr>
-            <tr>
-              <td>Specs / SDD</td>
-              <td><code>anamaya-maya/maya-travel-ai-control-plane</code></td>
-              <td class="no">Private control plane</td>
-            </tr>
-            <tr>
-              <td>Runtime agent</td>
-              <td><code>maya-travel-ai-backend</code> (<code>maya-api</code>)</td>
-              <td class="no">Private</td>
-            </tr>
-            <tr>
-              <td>OMS gateway</td>
-              <td><code>maya-anamaya-mcp</code></td>
-              <td class="no">Private · public URL at <code>/mcp/anamaya</code></td>
-            </tr>
-            <tr>
-              <td>Order spine</td>
-              <td>Anamaya OMS (<code>dev-anamaya.biztrip.id</code>)</td>
-              <td class="no">Anamaya / yBizTrip</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="toc" style="margin-top:20px">
+        <a href="capabilities.html#main"><strong>Full loop table</strong><span>7 steps as SDD candidate</span></a>
+        <a href="capabilities.html#mvp"><strong>MVP rules</strong><span>3 options · geo · intent flex · photos</span></a>
+        <a href="architecture.html"><strong>Architecture</strong><span>MCP vs OMS detail</span></a>
+        <a href="path.html"><strong>One chat turn</strong><span>Sequence diagram</span></a>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    Maya Travel AI · public architecture docs · modeled on
-    <a href="https://raisd-campus.github.io/portal-api-docs/">raisd-campus/portal-api-docs</a>
-    · 23 September 2026
+    Straight-forward overview · Anamaya AI Team 23 Sep 2026 · freeze as SDD after review
   </footer>
 
   <script type="module">
