@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CAP catalogue — how to verify Maya</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <strong>Maya Architecture Docs</strong>
+        <span>Overview · CAP · SDD · ADR · Architecture</span>
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="../index.html">Overview</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../index.html">Rule of thumb</a>
+            <a href="../cap/index.html">How to verify</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main active" href="../cap/index.html">CAP</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../cap/index.html">Catalogue + checklist</a>
+            <a href="../cap/CAP-01.html">CAP-01 Intent</a>
+            <a href="../cap/CAP-02.html">CAP-02 Summary</a>
+            <a href="../cap/CAP-03.html">CAP-03 Summary edit</a>
+            <a href="../cap/CAP-04.html">CAP-04 Intent confirm</a>
+            <a href="../cap/CAP-05.html">CAP-05 ≤3 options</a>
+            <a href="../cap/CAP-06.html">CAP-06 Refine search</a>
+            <a href="../cap/CAP-07.html">CAP-07 Book confirm</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main " href="../sdd/index.html">SDD</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../sdd/index.html">SDD hub</a>
+            <a href="../capabilities.html#main">Main loop (draft)</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main " href="../adr/index.html">ADR</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../adr/index.html">ADR hub</a>
+            <a href="../architecture.html">Maya → MCP → OMS</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="../architecture.html">Architecture</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../architecture.html">MCP → OMS</a>
+            <a href="../path.html">Request path</a>
+            <a href="../capabilities.html">Legacy catalogue</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <h1>CAP catalogue — how to read</h1>
+      <p>
+        <strong>CAP</strong> = Capability (what Maya must do).
+        <strong>SDD</strong> = Software Design Document (how the system is designed).
+        <strong>ADR</strong> = Architecture Decision Record (why a technical choice was locked).
+        Maya AI + training honour the same records — if behaviour is wrong, we detail the CAP, not hope the model invents it.
+      </p>
+      <div class="meta-row">
+        <span class="chip ok">7 CAPs = Asto loop</span>
+        <span class="chip">One page each</span>
+        <span class="chip warn">Review → freeze SDD</span>
+      </div>
+    </section>
+
+    <div class="note">
+      <strong>Asto asked: “gimana bacanya untuk make sure maya melakukan ini?”</strong>
+      Use the checklist below. Each Asto bullet maps to one CAP.
+      Open the CAP → read Must / Must not → run the verify probes.
+      ChatGPT review: paste this page URL + Asto’s bullet list and ask “is every bullet covered by a CAP?”
+    </div>
+
+    <section class="section" id="checklist">
+      <h2>Coverage checklist (Asto → CAP)</h2>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr><th>CAP</th><th>Title</th><th>Asto bullet</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+      <td><a href="CAP-01.html"><strong>CAP-01</strong></a></td>
+      <td>Detect user intent</td>
+      <td>di awal dia cek intensi user</td>
+      <td class="yes">covered</td>
+    </tr><tr>
+      <td><a href="CAP-02.html"><strong>CAP-02</strong></a></td>
+      <td>Complete slots → trip summary</td>
+      <td>setelah dapat intensi dia lengkapi semua yang diperlukan untuk dijadikan summary</td>
+      <td class="yes">covered</td>
+    </tr><tr>
+      <td><a href="CAP-03.html"><strong>CAP-03</strong></a></td>
+      <td>Summary edit without Search</td>
+      <td>kalau user saat disajikan summary tidak click search berarti ada data summary yang perlu diubah berdasarkan chating user</td>
+      <td class="yes">covered</td>
+    </tr><tr>
+      <td><a href="CAP-04.html"><strong>CAP-04</strong></a></td>
+      <td>Re-confirm when intent may have changed</td>
+      <td>kalau dicurigai user berubah intensi, dia konfirmasi lagi intensi user</td>
+      <td class="yes">covered</td>
+    </tr><tr>
+      <td><a href="CAP-05.html"><strong>CAP-05</strong></a></td>
+      <td>After Search: ≤3 best options</td>
+      <td>setelah user click search maka dia akan sajikan 3 opsi yang paling sesuai dengan preferensi user</td>
+      <td class="yes">covered</td>
+    </tr><tr>
+      <td><a href="CAP-06.html"><strong>CAP-06</strong></a></td>
+      <td>No Book → refine and search again</td>
+      <td>kalau user tidak click book berarti user belum cocok dengan pilihan dan dia akan cari lagi yang paling cocok berdasarkan chatting user</td>
+      <td class="yes">covered</td>
+    </tr><tr>
+      <td><a href="CAP-07.html"><strong>CAP-07</strong></a></td>
+      <td>After Book → intents met → confirmation</td>
+      <td>setelah user book dia akan cek apakah intensi user terpenuhi semua, kalau sudah dia akan sajikan halaman konfirmasi (sesuai flow design)</td>
+      <td class="yes">covered</td>
+    </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Glossary</h2>
+      <div class="legend">
+        <div class="legend-item"><strong>CAP</strong><span>Capability — behavioural contract Maya must perform.</span></div>
+        <div class="legend-item"><strong>SDD</strong><span>Software Design Document — product/system design wrapping CAPs.</span></div>
+        <div class="legend-item"><strong>ADR</strong><span>Architecture Decision Record — e.g. Maya→MCP→OMS, summary-before-search.</span></div>
+        <div class="legend-item"><strong>NRCP</strong><span>Natural Reply Capability Pack — how Maya speaks; cannot weaken CAP gates.</span></div>
+      </div>
+    </section>
+
+    <div class="toc">
+      <a href="CAP-01.html"><strong>CAP-01</strong><span>Detect intent</span></a>
+      <a href="CAP-02.html"><strong>CAP-02</strong><span>Summary slots</span></a>
+      <a href="CAP-03.html"><strong>CAP-03</strong><span>Edit summary</span></a>
+      <a href="CAP-04.html"><strong>CAP-04</strong><span>Re-confirm intent</span></a>
+      <a href="CAP-05.html"><strong>CAP-05</strong><span>≤3 options</span></a>
+      <a href="CAP-06.html"><strong>CAP-06</strong><span>Refine / more options</span></a>
+      <a href="CAP-07.html"><strong>CAP-07</strong><span>Book → confirm</span></a>
+    </div>
+  </main>
+  <footer class="footer">CAP catalogue · start here to verify Maya follows the booking loop</footer>
+  <script src="../nav-dropdown.js" defer></script>
+</body>
+</html>

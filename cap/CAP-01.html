@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CAP-01 — Detect user intent</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <strong>Maya Architecture Docs</strong>
+        <span>Overview · CAP · SDD · ADR · Architecture</span>
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="../index.html">Overview</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../index.html">Rule of thumb</a>
+            <a href="../cap/index.html">How to verify</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main active" href="../cap/index.html">CAP</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../cap/index.html">Catalogue + checklist</a>
+            <a href="../cap/CAP-01.html">CAP-01 Intent</a>
+            <a href="../cap/CAP-02.html">CAP-02 Summary</a>
+            <a href="../cap/CAP-03.html">CAP-03 Summary edit</a>
+            <a href="../cap/CAP-04.html">CAP-04 Intent confirm</a>
+            <a href="../cap/CAP-05.html">CAP-05 ≤3 options</a>
+            <a href="../cap/CAP-06.html">CAP-06 Refine search</a>
+            <a href="../cap/CAP-07.html">CAP-07 Book confirm</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main " href="../sdd/index.html">SDD</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../sdd/index.html">SDD hub</a>
+            <a href="../capabilities.html#main">Main loop (draft)</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main " href="../adr/index.html">ADR</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../adr/index.html">ADR hub</a>
+            <a href="../architecture.html">Maya → MCP → OMS</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="../architecture.html">Architecture</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../architecture.html">MCP → OMS</a>
+            <a href="../path.html">Request path</a>
+            <a href="../capabilities.html">Legacy catalogue</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <h1>CAP-01 — Detect user intent</h1>
+      <p>Capability record Maya (and training) must honour. Part of the flight / hotel / both booking loop.</p>
+      <div class="meta-row">
+        <span class="chip ok">CAP-01</span>
+        <span class="chip">CAP</span>
+        <span class="chip warn">MVP freeze candidate</span>
+      </div>
+    </section>
+
+    <div class="note">
+      <strong>Asto source (verbatim).</strong> di awal dia cek intensi user
+    </div>
+
+    <section class="section">
+      <h2>Must</h2>
+      <ul><li>Classify every new trip request as exactly one of: flight, hotel, or both.</li><li>State the detected intent in the trip summary in plain language.</li><li>If the message is ambiguous between flight and hotel, ask one clarifying question — do not search yet.</li></ul>
+    </section>
+    <section class="section">
+      <h2>Must not</h2>
+      <ul><li>Invent a fourth product job (visa encyclopedia, open Q&A, weather chat as primary).</li><li>Silently switch intent without confirmation (see CAP-04).</li></ul>
+    </section>
+    <section class="section">
+      <h2>How to verify Maya does this</h2>
+      <p class="lead">Use these probes. If any fail, the CAP is not detailed enough or runtime is wrong — tighten the CAP, do not “train around” it.</p>
+      <ul><li>User: “cari hotel Seminyak 2 malam” → Maya treats intent as hotel (or both only if flight also stated).</li><li>User: “CGK ke Jogja besok” → intent flight.</li><li>User: “liburan Bali” alone → ask flight / hotel / both before searching.</li></ul>
+    </section>
+
+    <p class="note">All CAPs: <a href="CAP-01.html">CAP-01</a> · <a href="CAP-02.html">CAP-02</a> · <a href="CAP-03.html">CAP-03</a> · <a href="CAP-04.html">CAP-04</a> · <a href="CAP-05.html">CAP-05</a> · <a href="CAP-06.html">CAP-06</a> · <a href="CAP-07.html">CAP-07</a></p>
+  </main>
+  <footer class="footer">CAP-01 · Maya CAP catalogue · AI must honour CAP + SDD + ADR</footer>
+  <script src="../nav-dropdown.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ADR hub — Maya</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <strong>Maya Architecture Docs</strong>
+        <span>Overview · CAP · SDD · ADR · Architecture</span>
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="../index.html">Overview</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../index.html">Rule of thumb</a>
+            <a href="../cap/index.html">How to verify</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main " href="../cap/index.html">CAP</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../cap/index.html">Catalogue + checklist</a>
+            <a href="../cap/CAP-01.html">CAP-01 Intent</a>
+            <a href="../cap/CAP-02.html">CAP-02 Summary</a>
+            <a href="../cap/CAP-03.html">CAP-03 Summary edit</a>
+            <a href="../cap/CAP-04.html">CAP-04 Intent confirm</a>
+            <a href="../cap/CAP-05.html">CAP-05 ≤3 options</a>
+            <a href="../cap/CAP-06.html">CAP-06 Refine search</a>
+            <a href="../cap/CAP-07.html">CAP-07 Book confirm</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main " href="../sdd/index.html">SDD</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../sdd/index.html">SDD hub</a>
+            <a href="../capabilities.html#main">Main loop (draft)</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main active" href="../adr/index.html">ADR</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../adr/index.html">ADR hub</a>
+            <a href="../architecture.html">Maya → MCP → OMS</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="../architecture.html">Architecture</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../architecture.html">MCP → OMS</a>
+            <a href="../path.html">Request path</a>
+            <a href="../capabilities.html">Legacy catalogue</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <h1>ADR — Architecture Decision Records</h1>
+      <p>Technical locks. CAPs say what Maya does; ADRs say how the stack is wired.</p>
+    </section>
+    <div class="table-wrap">
+      <table class="attr">
+        <thead><tr><th>ID</th><th>Decision</th><th>Summary</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>ADR-MCP-OMS</td>
+            <td>Maya → Anamaya MCP → OMS</td>
+            <td>Inventory always live from OMS via MCP; MCP holds behaviour/session, not fares/rooms. See <a href="../architecture.html">architecture</a>.</td>
+          </tr>
+          <tr>
+            <td>ADR-001</td>
+            <td>Trip summary before search</td>
+            <td>No OMS search until summary + Search (aligns CAP-02 / CAP-03).</td>
+          </tr>
+          <tr>
+            <td>ADR-MVP-FLOW</td>
+            <td>Positive path to book first</td>
+            <td>Separate flow bugs from model IQ; market stays on our model (Yogi).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer class="footer">ADR hub · architecture decisions Maya must not contradict</footer>
+  <script src="../nav-dropdown.js" defer></script>
+</body>
+</html>

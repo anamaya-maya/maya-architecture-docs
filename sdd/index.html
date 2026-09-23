@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SDD hub — Maya</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <strong>Maya Architecture Docs</strong>
+        <span>Overview · CAP · SDD · ADR · Architecture</span>
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="../index.html">Overview</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../index.html">Rule of thumb</a>
+            <a href="../cap/index.html">How to verify</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main " href="../cap/index.html">CAP</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../cap/index.html">Catalogue + checklist</a>
+            <a href="../cap/CAP-01.html">CAP-01 Intent</a>
+            <a href="../cap/CAP-02.html">CAP-02 Summary</a>
+            <a href="../cap/CAP-03.html">CAP-03 Summary edit</a>
+            <a href="../cap/CAP-04.html">CAP-04 Intent confirm</a>
+            <a href="../cap/CAP-05.html">CAP-05 ≤3 options</a>
+            <a href="../cap/CAP-06.html">CAP-06 Refine search</a>
+            <a href="../cap/CAP-07.html">CAP-07 Book confirm</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main active" href="../sdd/index.html">SDD</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../sdd/index.html">SDD hub</a>
+            <a href="../capabilities.html#main">Main loop (draft)</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main " href="../adr/index.html">ADR</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../adr/index.html">ADR hub</a>
+            <a href="../architecture.html">Maya → MCP → OMS</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="../architecture.html">Architecture</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="../architecture.html">MCP → OMS</a>
+            <a href="../path.html">Request path</a>
+            <a href="../capabilities.html">Legacy catalogue</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <h1>SDD — Software Design Documents</h1>
+      <p>
+        SDD is the design package. For MVP we freeze the booking loop as SDD once product signs the CAP checklist.
+        Training and runtime use the same CAP IDs.
+      </p>
+      <div class="meta-row">
+        <span class="chip warn">Draft — pending Asto / Yogi freeze</span>
+        <span class="chip ok">Built from CAP-01…CAP-07</span>
+      </div>
+    </section>
+    <div class="note">
+      <strong>Current SDD candidate.</strong>
+      Main job = book flight, hotel, or both, via CAP-01…CAP-07.
+      Review: <a href="../cap/index.html">CAP checklist</a> · narrative: <a href="../capabilities.html#main">main loop</a> · rules: <a href="../index.html">overview</a>.
+    </div>
+    <div class="table-wrap">
+      <table class="attr">
+        <thead><tr><th>ID</th><th>Document</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>SDD-MVP-BOOK</td><td>Booking loop (flight / hotel / both) = CAP-01…07</td><td class="yes">Draft for freeze</td></tr>
+          <tr><td>SPEC-001+</td><td>Private control-plane SPECs (slots, search, book)</td><td>Private repo</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer class="footer">SDD hub · freeze after CAP checklist OK</footer>
+  <script src="../nav-dropdown.js" defer></script>
+</body>
+</html>

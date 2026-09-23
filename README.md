@@ -12,10 +12,15 @@ Modeled on the Raisd campus public docs pattern
 
 | Page | Purpose |
 |------|---------|
-| [`index.html`](index.html) | Hub — one-line truth + TOC |
+| [`index.html`](index.html) | Rule of thumb (10 rules) |
+| [`cap/`](cap/) | **CAP-01…07** — Asto loop one-by-one + verify checklist |
+| [`sdd/`](sdd/) | SDD hub (freeze candidate) |
+| [`adr/`](adr/) | ADR hub (MCP→OMS, summary-before-search) |
 | [`architecture.html`](architecture.html) | Maya → Anamaya MCP → OMS |
-| [`capabilities.html`](capabilities.html) | **Main loop** (flight/hotel/both) · must-know · may-share · tools |
+| [`capabilities.html`](capabilities.html) | Narrative catalogue + MVP rules |
 | [`path.html`](path.html) | One chat turn + corporate ESPPD spine |
+
+**How to verify (Asto):** https://anamaya-maya.github.io/maya-architecture-docs/cap/
 
 ## One-line truth
 
