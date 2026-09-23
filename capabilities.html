@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maya capability catalogue</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <strong>Maya Architecture Docs</strong>
+        <span>Overview · Architecture · Capabilities · Request path</span>
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="index.html">Overview</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="index.html">Docs hub</a>
+            <a href="architecture.html">Architecture</a>
+            <a class="active" href="capabilities.html">Capabilities</a>
+            <a href="path.html">Request path</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="architecture.html">Architecture</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="architecture.html">Maya → MCP → OMS</a>
+            <a href="architecture.html#where">What lives where</a>
+            <a href="architecture.html#two-mcp">Two MCP services</a>
+            <a href="architecture.html#myths">Misconceptions</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main active" href="capabilities.html">Capabilities</a>
+          <div class="nav-dd-menu" role="menu">
+            <a class="active" href="capabilities.html">Capability map</a>
+            <a href="capabilities.html#know">What Maya must know</a>
+            <a href="capabilities.html#share">What Maya may share</a>
+            <a href="capabilities.html#tools">AUTO vs CONFIRM tools</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="path.html">Request path</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="path.html">End-to-end path</a>
+            <a href="path.html#turn">One chat turn</a>
+            <a href="path.html#spine">Corporate booking spine</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Capability catalogue</h1>
+      <p>
+        Mapping of what Maya <em>must know</em>, what it <em>may share</em> with travelers,
+        and what must always come from OMS tools — so language can vary without inventing facts.
+        Review target for eng (Yogi) and product before claiming grounded answers.
+      </p>
+      <div class="meta-row">
+        <span class="chip ok">Facts from tools</span>
+        <span class="chip ok">Voice from NRCP</span>
+        <span class="chip danger">Never invent inventory</span>
+      </div>
+    </section>
+
+    <div class="note">
+      <strong>From product chat (23 Sep).</strong>
+      Sapa feels ~80–90% grounded because context and data are narrow.
+      Maya mixes addresses, hotel names, and preferences — so capability boundaries must be
+      explicit first; MCP then only exposes what is in that map.
+    </div>
+
+    <div class="toc">
+      <a href="#know"><strong>Must know</strong><span>Internal capability Maya needs to reason</span></a>
+      <a href="#share"><strong>May share</strong><span>Safe to say to travelers</span></a>
+      <a href="#never"><strong>Never invent</strong><span>Only OMS / tools may assert</span></a>
+      <a href="#tools"><strong>Tool gates</strong><span>AUTO vs CONFIRM</span></a>
+    </div>
+
+    <section class="section" id="know">
+      <h2>What Maya must know (capability)</h2>
+      <p class="lead">These are skills and context Maya needs in order to answer without guessing.</p>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr>
+              <th>Capability</th>
+              <th>Source</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Trip intent &amp; slots (origin, destination, dates, pax)</td>
+              <td>Conversation + SPEC-001</td>
+              <td>Summarize → confirm before search (ADR-001)</td>
+            </tr>
+            <tr>
+              <td>Flight-only vs hotel-only vs flight+hotel focus</td>
+              <td>Session state</td>
+              <td>Hotel ask must not dump flights after flight pick</td>
+            </tr>
+            <tr>
+              <td>Traveler prefs in session (airline, stars, breakfast, bed)</td>
+              <td>Session memory</td>
+              <td>Must not leak across unrelated trips</td>
+            </tr>
+            <tr>
+              <td>Company policy / plafon (corporate)</td>
+              <td>OMS via MCP</td>
+              <td>Deterministic filter — LLM does not invent policy</td>
+            </tr>
+            <tr>
+              <td>How to ask for confirmation (Ya, cari / Ya, book)</td>
+              <td>NRCP pack</td>
+              <td>Clickable confirm CTAs where channel allows</td>
+            </tr>
+            <tr>
+              <td>Honest empty inventory messaging</td>
+              <td>Tool result + compose rules</td>
+              <td>Broaden CTA — never fabricate hotels/flights</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="share">
+      <h2>What Maya may share publicly</h2>
+      <p class="lead">Safe content for travelers once grounded in tool results or explicit session facts.</p>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr>
+              <th>May share</th>
+              <th>Condition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Trip summary before search</td>
+              <td>Slots filled; wait for traveler confirm</td>
+            </tr>
+            <tr>
+              <td>≤3 ranked flight or hotel options + reasons</td>
+              <td>Live OMS search returned offers</td>
+            </tr>
+            <tr>
+              <td>Property photos / stars / area labels</td>
+              <td>From OMS property payload (not stock invent)</td>
+            </tr>
+            <tr>
+              <td>“Area X empty — try parent city?”</td>
+              <td>OMS discovery empty for requested geo</td>
+            </tr>
+            <tr>
+              <td>Booking / approval status</td>
+              <td>OMS booking APIs after auth</td>
+            </tr>
+            <tr>
+              <td>Recap before book</td>
+              <td>First “Ya, book” = recap only; second confirm mutates</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="never">
+      <h2>What Maya must never invent</h2>
+      <div class="note danger">
+        Fares, availability, hotel names, ticket numbers, approval outcomes, and policy
+        exceptions are factual. If the tool did not return them, Maya must not invent them —
+        even when the traveler presses for an answer.
+      </div>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr>
+              <th>Never invent</th>
+              <th>Must come from</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Flight prices, seats, baggage rules beyond tool payload</td>
+              <td>OMS flight search / add-ons</td>
+            </tr>
+            <tr>
+              <td>Hotel names, rates, photos, breakfast flags</td>
+              <td>OMS hotel discovery / room-rate</td>
+            </tr>
+            <tr>
+              <td>Policy allow / deny</td>
+              <td>OMS travel-policies / filtered offers</td>
+            </tr>
+            <tr>
+              <td>“Booking confirmed” / e-ticket issued</td>
+              <td>OMS booking status / files fetch</td>
+            </tr>
+            <tr>
+              <td>Credentials, API keys, other tenants’ data</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="tools">
+      <h2>AUTO vs CONFIRM tools (via Anamaya MCP)</h2>
+      <p class="lead">Tool permission is hard-gated in runtime. NRCP cannot weaken CONFIRM.</p>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Gate</th>
+              <th>OMS area</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>search_flights</code> / add-ons</td><td class="yes">AUTO</td><td>flight.search</td></tr>
+            <tr><td><code>search_hotels</code> / rates</td><td class="yes">AUTO</td><td>hotel.search / rate</td></tr>
+            <tr><td><code>check_travel_policy</code></td><td class="yes">AUTO</td><td>policy.read</td></tr>
+            <tr><td><code>recommend_itinerary</code></td><td class="yes">AUTO</td><td>Maya ranker ≤3</td></tr>
+            <tr><td><code>list_approvals</code> / booking detail</td><td class="yes">AUTO</td><td>booking.read</td></tr>
+            <tr><td><code>create_esppd</code> / attach docs</td><td class="no">CONFIRM</td><td>booking.write</td></tr>
+            <tr><td><code>create_booking_shell</code> / attach flight|hotel</td><td class="no">CONFIRM</td><td>booking.write</td></tr>
+            <tr><td><code>approve_booking</code> / reject</td><td class="no">CONFIRM</td><td>booking.approve</td></tr>
+            <tr><td><code>process_payment</code> / cancel / reschedule</td><td class="no">CONFIRM</td><td>payment / change</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note">
+        Preferred chatbot path: <code>MAYA_OMS_VIA_MCP=true</code> → Anamaya MCP REST facade.
+        Paths MCP does not expose yet may fall back to direct OMS.
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Capability map for Yogi / product review · grounded answers before scale training
+  </footer>
+
+  <script src="nav-dropdown.js" defer></script>
+</body>
+</html>

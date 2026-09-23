@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maya request path</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <strong>Maya Architecture Docs</strong>
+        <span>Overview · Architecture · Capabilities · Request path</span>
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="index.html">Overview</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="index.html">Docs hub</a>
+            <a href="architecture.html">Architecture</a>
+            <a href="capabilities.html">Capabilities</a>
+            <a class="active" href="path.html">Request path</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="architecture.html">Architecture</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="architecture.html">Maya → MCP → OMS</a>
+            <a href="architecture.html#where">What lives where</a>
+            <a href="architecture.html#two-mcp">Two MCP services</a>
+            <a href="architecture.html#myths">Misconceptions</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="capabilities.html">Capabilities</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="capabilities.html">Capability map</a>
+            <a href="capabilities.html#know">What Maya must know</a>
+            <a href="capabilities.html#share">What Maya may share</a>
+            <a href="capabilities.html#tools">AUTO vs CONFIRM tools</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main active" href="path.html">Request path</a>
+          <div class="nav-dd-menu" role="menu">
+            <a class="active" href="path.html">End-to-end path</a>
+            <a href="path.html#turn">One chat turn</a>
+            <a href="path.html#spine">Corporate booking spine</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Request path &amp; one chat turn</h1>
+      <p>
+        How a traveler message becomes a grounded reply — and where corporate booking sits
+        on the Anamaya order spine.
+      </p>
+      <div class="meta-row">
+        <span class="chip ok">Search is AUTO</span>
+        <span class="chip warn">Book needs CONFIRM ×2</span>
+        <span class="chip">ESPPD-first corporate</span>
+      </div>
+    </section>
+
+    <section class="section" id="turn">
+      <h2>One chat turn (hotel search example)</h2>
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Session remembers picks — inventory stays live</h3>
+            <p>Maya does not invent a hotel list when OMS returns empty</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <pre class="mermaid">
+sequenceDiagram
+  participant U as Traveler
+  participant M as maya-api Agent
+  participant P as NRCP pack
+  participant G as Anamaya MCP
+  participant O as OMS
+
+  U->>M: Hotel dekat Seminyak 2 malam
+  M->>P: load live reply / NLU rules
+  M->>M: intent + slots + session context
+  Note over M: remembers flight pick / dates<br/>does NOT invent hotel list
+  M->>G: search_hotels / discovery tool
+  G->>O: POST /hotel/discovery live
+  O-->>G: properties + photos or empty
+  G-->>M: canonical offers
+  M->>M: rank ≤3, grounded facts
+  M-->>U: Hotel options or honest empty
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="spine">
+      <h2>Corporate booking spine</h2>
+      <div class="card">
+        <div class="card-body">
+          <pre class="mermaid">
+flowchart LR
+  A[ESPPD + Surat Jalan] --> B[Policy-filtered search]
+  B --> C[Top 3 options]
+  C --> D[Traveler confirms]
+  D --> E[Submit package]
+  E --> F[Manager approval]
+  F --> G[Issued / Failed]
+  G --> H[E-ticket on channel]
+          </pre>
+        </div>
+      </div>
+      <div class="note warn">
+        Chat stops at recap until an explicit second confirmation before mutating OMS bookings.
+        First “Ya, book” = itinerary recap only.
+      </div>
+    </section>
+
+    <section class="section" id="runtime">
+      <h2>Deployed runtime (PoC / DEV)</h2>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr><th>Service</th><th>Role</th><th>Typical host</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>maya-api</code></td><td>Agent + domain API</td><td>Cloud Run <code>anamaya-g</code></td></tr>
+            <tr><td><code>maya-poc</code></td><td>Web chat + /simulasi</td><td><code>maya.suherman.net</code></td></tr>
+            <tr><td><code>maya-anamaya-mcp</code></td><td>OMS MCP + REST facade</td><td><code>/mcp/anamaya</code></td></tr>
+            <tr><td><code>maya-travel-ai-mcp</code></td><td>Persona / SPEC MCP</td><td><code>/mcp</code></td></tr>
+            <tr><td>Anamaya OMS</td><td>Order spine</td><td><code>dev-anamaya.biztrip.id</code> (API VM)</td></tr>
+            <tr><td>Control plane</td><td>Specs / SDD</td><td>private sibling repo</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note warn">
+        Ops caveat: if <code>dev-anamaya.biztrip.id</code> has DNS split-brain (API + Vite site),
+        calls look flaky. That is not an MCP inventory bug.
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Request path diagrams · public review copy
+  </footer>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base",
+      securityLevel: "loose",
+      flowchart: { htmlLabels: true, curve: "basis" },
+      sequence: { actorMargin: 28, messageMargin: 36 },
+      themeVariables: {
+        primaryColor: "#eef6f5",
+        primaryTextColor: "#1c1c1c",
+        primaryBorderColor: "#0b4f4a",
+        lineColor: "#5c564e",
+        secondaryColor: "#f7f4ef",
+        tertiaryColor: "#ffffff",
+        fontFamily: "Segoe UI, system-ui, sans-serif",
+      },
+    });
+  </script>
+  <script src="nav-dropdown.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maya Architecture Docs</title>
+  <meta name="description" content="Public architecture and capability mapping for Maya Travel AI — Maya → Anamaya MCP → OMS." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <strong>Maya Architecture Docs</strong>
+        <span>Overview · Architecture · Capabilities · Request path</span>
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <div class="nav-dd">
+          <a class="nav-dd-main active" href="index.html">Overview</a>
+          <div class="nav-dd-menu" role="menu">
+            <a class="active" href="index.html">Docs hub</a>
+            <a href="architecture.html">Architecture</a>
+            <a href="capabilities.html">Capabilities</a>
+            <a href="path.html">Request path</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="architecture.html">Architecture</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="architecture.html">Maya → MCP → OMS</a>
+            <a href="architecture.html#where">What lives where</a>
+            <a href="architecture.html#two-mcp">Two MCP services</a>
+            <a href="architecture.html#myths">Misconceptions</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="capabilities.html">Capabilities</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="capabilities.html">Capability map</a>
+            <a href="capabilities.html#know">What Maya must know</a>
+            <a href="capabilities.html#share">What Maya may share</a>
+            <a href="capabilities.html#tools">AUTO vs CONFIRM tools</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="path.html">Request path</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="path.html">End-to-end path</a>
+            <a href="path.html#turn">One chat turn</a>
+            <a href="path.html#spine">Corporate booking spine</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Maya architecture &amp; capability map</h1>
+      <p>
+        Public review site for how Maya talks to Anamaya: the live path is
+        <strong>Traveler → maya-api → Anamaya MCP → OMS</strong>.
+        Use this to align what Maya must know, what it may say publicly, and what
+        always stays a live OMS query — before trusting training alone.
+      </p>
+      <div class="meta-row">
+        <span class="chip ok">Maya → MCP → OMS</span>
+        <span class="chip ok">Inventory is live from OMS</span>
+        <span class="chip warn">MCP ≠ flight/hotel DB</span>
+        <span class="chip">Public: anamaya-maya.github.io/maya-architecture-docs</span>
+      </div>
+    </section>
+
+    <div class="note">
+      <strong>Why this exists (23 Sep 2026).</strong>
+      Product feedback: Sapa answers feel grounded; Maya sometimes leaves context.
+      Root cause to align first is <em>capability mapping</em> — clear boundaries for
+      what Maya knows, what it may share, and what MCP proxies from OMS — then share
+      with eng (Yogi) before claiming zero hallucination.
+    </div>
+
+    <div class="toc">
+      <a href="architecture.html">
+        <strong>Architecture — Maya → MCP → OMS</strong>
+        <span>Gateway path, memory vs inventory, two MCP services</span>
+      </a>
+      <a href="capabilities.html">
+        <strong>Capability catalogue</strong>
+        <span>Must-know · may-share · never invent · AUTO/CONFIRM tools</span>
+      </a>
+      <a href="path.html">
+        <strong>Request path &amp; one turn</strong>
+        <span>Sequence for search, ESPPD spine, deploy surfaces</span>
+      </a>
+    </div>
+
+    <section class="section">
+      <h2>One-line truth</h2>
+      <p class="lead">
+        MCP is the <em>gateway + session/behaviour surface</em> for agents.
+        Flight and hotel inventory is always queried live from OMS — it is
+        <strong>not</strong> cached as inventory inside MCP.
+      </p>
+      <div class="legend">
+        <div class="legend-item">
+          <strong>Session / behaviour</strong>
+          <span>Intent, slots, trip summary, in-chat picks, reply pack (NRCP).</span>
+        </div>
+        <div class="legend-item">
+          <strong>Live OMS via MCP</strong>
+          <span>Flights, hotels, rates, photos, policy, bookings, approvals.</span>
+        </div>
+        <div class="legend-item">
+          <strong>Hard gates</strong>
+          <span>Book / pay / cancel need explicit traveler CONFIRM — pack text cannot weaken them.</span>
+        </div>
+        <div class="legend-item">
+          <strong>Honest empty</strong>
+          <span>Empty OMS discovery → say so; never invent fares, hotels, or tickets.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Source of truth</h2>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr>
+              <th>Layer</th>
+              <th>Repo / surface</th>
+              <th>Public?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>This docs site</td>
+              <td><code>anamaya-maya/maya-architecture-docs</code></td>
+              <td class="yes">Yes — GitHub Pages</td>
+            </tr>
+            <tr>
+              <td>Specs / SDD</td>
+              <td><code>anamaya-maya/maya-travel-ai-control-plane</code></td>
+              <td class="no">Private control plane</td>
+            </tr>
+            <tr>
+              <td>Runtime agent</td>
+              <td><code>maya-travel-ai-backend</code> (<code>maya-api</code>)</td>
+              <td class="no">Private</td>
+            </tr>
+            <tr>
+              <td>OMS gateway</td>
+              <td><code>maya-anamaya-mcp</code></td>
+              <td class="no">Private · public URL at <code>/mcp/anamaya</code></td>
+            </tr>
+            <tr>
+              <td>Order spine</td>
+              <td>Anamaya OMS (<code>dev-anamaya.biztrip.id</code>)</td>
+              <td class="no">Anamaya / yBizTrip</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Maya Travel AI · public architecture docs · modeled on
+    <a href="https://raisd-campus.github.io/portal-api-docs/">raisd-campus/portal-api-docs</a>
+    · 23 September 2026
+  </footer>
+
+  <script src="nav-dropdown.js" defer></script>
+</body>
+</html>

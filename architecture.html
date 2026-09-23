@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maya → Anamaya MCP → OMS — Architecture</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <strong>Maya Architecture Docs</strong>
+        <span>Overview · Architecture · Capabilities · Request path</span>
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="index.html">Overview</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="index.html">Docs hub</a>
+            <a class="active" href="architecture.html">Architecture</a>
+            <a href="capabilities.html">Capabilities</a>
+            <a href="path.html">Request path</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main active" href="architecture.html">Architecture</a>
+          <div class="nav-dd-menu" role="menu">
+            <a class="active" href="architecture.html">Maya → MCP → OMS</a>
+            <a href="architecture.html#where">What lives where</a>
+            <a href="architecture.html#two-mcp">Two MCP services</a>
+            <a href="architecture.html#myths">Misconceptions</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="capabilities.html">Capabilities</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="capabilities.html">Capability map</a>
+            <a href="capabilities.html#know">What Maya must know</a>
+            <a href="capabilities.html#share">What Maya may share</a>
+            <a href="capabilities.html#tools">AUTO vs CONFIRM tools</a>
+          </div>
+        </div>
+        <div class="nav-dd">
+          <a class="nav-dd-main" href="path.html">Request path</a>
+          <div class="nav-dd-menu" role="menu">
+            <a href="path.html">End-to-end path</a>
+            <a href="path.html#turn">One chat turn</a>
+            <a href="path.html#spine">Corporate booking spine</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Architecture — Maya → Anamaya MCP → OMS</h1>
+      <p>
+        Preferred live path when <code>MAYA_OMS_VIA_MCP=true</code>.
+        Channels never call OMS or providers directly.
+      </p>
+      <div class="meta-row">
+        <span class="chip ok">Gateway path</span>
+        <span class="chip ok">Behaviour ≠ inventory</span>
+        <span class="chip warn">Direct OMS = fallback only</span>
+      </div>
+    </section>
+
+    <div class="toc">
+      <a href="#path"><strong>End-to-end path</strong><span>Channels → maya-api → MCP → OMS</span></a>
+      <a href="#where"><strong>What lives where</strong><span>Memory vs live inventory</span></a>
+      <a href="#two-mcp"><strong>Two MCP services</strong><span>OMS gateway vs persona</span></a>
+      <a href="#myths"><strong>Misconceptions</strong><span>What MCP is not</span></a>
+    </div>
+
+    <section class="section" id="path">
+      <h2>End-to-end request path</h2>
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Preferred spine</h3>
+            <p>Forbidden: WhatsApp / agent → provider or OMS HTTP without Domain API + MCP</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <pre class="mermaid">
+flowchart LR
+  T[Traveler] --> CH[Channel<br/>WhatsApp / Web / iOS / Android]
+  CH --> API[maya-api<br/>Conversation + Agent]
+  API --> NR[Live NRCP pack<br/>SPEC-017 voice]
+  API --> MCP[maya-anamaya-mcp<br/>OMS gateway]
+  MCP --> OMS[Anamaya OMS]
+  OMS --> BT[Biztrip / OTA<br/>aggregation]
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="where">
+      <h2>What lives where</h2>
+      <p class="lead">Yogi’s reading for inventory is correct: offers always come from OMS. MCP exposes the capability; it is not the source of truth for fares or rooms.</p>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr>
+              <th>Concern</th>
+              <th>Where it lives</th>
+              <th>Does MCP store it?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>User intent, slots, trip summary</td>
+              <td>maya-api conversation state + memory</td>
+              <td class="yes">Session / behaviour — yes</td>
+            </tr>
+            <tr>
+              <td>Chosen flight / hotel in this chat</td>
+              <td>maya-api session state</td>
+              <td class="yes">Choice context — yes</td>
+            </tr>
+            <tr>
+              <td>Reply style / NLU pack</td>
+              <td>Natural Reply Capability Pack (SPEC-016/017)</td>
+              <td class="no">No — pack store / control plane</td>
+            </tr>
+            <tr>
+              <td>Live flight offers &amp; prices</td>
+              <td>OMS <code>POST /flight/search/*</code></td>
+              <td class="no"><strong>No</strong> — queried each search</td>
+            </tr>
+            <tr>
+              <td>Live hotel discovery / rates / photos</td>
+              <td>OMS hotel discovery / room-rate / property</td>
+              <td class="no"><strong>No</strong> — queried each search</td>
+            </tr>
+            <tr>
+              <td>Policy, ESPPD, approvals, e-ticket</td>
+              <td>OMS booking / policy APIs</td>
+              <td class="no">Proxied on demand — not an inventory DB</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note">
+        Empty hotel list after training usually means OMS discovery empty for that geo,
+        DNS split-brain, or conversation focus bug — not a missing MCP hotel cache.
+      </div>
+    </section>
+
+    <section class="section" id="two-mcp">
+      <h2>Two different MCP services</h2>
+      <p class="lead">“MCP” in chat is easy to conflate. There are two sibling gateways.</p>
+      <div class="card">
+        <div class="card-body">
+          <pre class="mermaid">
+flowchart TB
+  subgraph Channels
+    WA[WhatsApp]
+    WEB[Web PoC]
+    APP[iOS / Android]
+  end
+  subgraph Maya
+    API[maya-api]
+    NRCP[NRCP behaviour pack]
+    MEM[Session memory<br/>intent · picks · prefs]
+  end
+  subgraph Gateways
+    AMCP[maya-anamaya-mcp<br/>OMS tools]
+    PMCP[maya-travel-ai-mcp<br/>persona / CI]
+  end
+  subgraph Backbone
+    OMS[Anamaya OMS]
+    CP[Control plane specs]
+  end
+  WA --> API
+  WEB --> API
+  APP --> API
+  API --> NRCP
+  API --> MEM
+  API --> AMCP
+  AMCP --> OMS
+  PMCP --> CP
+          </pre>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr><th>Service</th><th>Role</th><th>Typical surface</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>maya-anamaya-mcp</code></td>
+              <td>OMS capability gateway for chatbot + agents</td>
+              <td><code>maya.suherman.net/mcp/anamaya</code></td>
+            </tr>
+            <tr>
+              <td><code>maya-travel-ai-mcp</code></td>
+              <td>Persona / SPEC / CI triggers — not inventory</td>
+              <td><code>maya.suherman.net/mcp</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="myths">
+      <h2>Misconceptions to avoid</h2>
+      <div class="table-wrap">
+        <table class="attr">
+          <thead>
+            <tr><th>Misconception</th><th>Reality</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>MCP is a database of flights/hotels</td>
+              <td>MCP is a tool/REST facade over live OMS. Inventory stays dynamic in OMS/Biztrip.</td>
+            </tr>
+            <tr>
+              <td>Maya AI → OMS directly</td>
+              <td>Preferred path is Maya → Anamaya MCP → OMS. Direct OMS is fallback for paths MCP does not expose yet.</td>
+            </tr>
+            <tr>
+              <td>Empty hotel list means MCP “forgot” hotels</td>
+              <td>Usually OMS empty geo, DNS, or focus bug — not an MCP inventory miss.</td>
+            </tr>
+            <tr>
+              <td>Behaviour pack = booking rules</td>
+              <td>NRCP controls how Maya speaks. Book / pay / cancel stay hard-gated in tools (CONFIRM).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Architecture clarification · Anamaya AI Team WA 2026-09-23 · public copy for review
+  </footer>
+
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base",
+      securityLevel: "loose",
+      flowchart: { htmlLabels: true, curve: "basis" },
+      themeVariables: {
+        primaryColor: "#eef6f5",
+        primaryTextColor: "#1c1c1c",
+        primaryBorderColor: "#0b4f4a",
+        lineColor: "#5c564e",
+        secondaryColor: "#f7f4ef",
+        tertiaryColor: "#ffffff",
+        fontFamily: "Segoe UI, system-ui, sans-serif",
+      },
+    });
+  </script>
+  <script src="nav-dropdown.js" defer></script>
+</body>
+</html>
